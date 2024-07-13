@@ -1,0 +1,46 @@
+#include <LiquidCrystal.h>
+#include "DHT.h"
+
+#define DHTPIN 13     // what pin we're connected to
+#define DHTTYPE DHT11   // DHT 11  (AM2302)
+DHT dht(DHTPIN, DHTTYPE);
+
+// initialize the library with the numbers of the interface pins
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+void setup() {
+  // set up the LCD's number of columns and rows: 
+  Serial.begin(16, 2);
+  Serial.begin(9600);
+  // Print a message to the LCD.
+  Serial.print("DHT11 Sensor");
+  
+  dht.begin();
+}
+
+void loop() {
+  float h = dht.readHumidity();
+  float t = dht.readTemperature();
+  delay(500);
+  // check if returns are valid, if they are NaN (not a number) then something went wrong!
+  if (isnan(t) || isnan(h)) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    Serial.print("Waiting...");
+    lcd.setCursor(0, 1); 
+    Serial.print("from DHT");
+
+  } else {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    
+    Serial.print("Temp: ");
+    Serial.print(t);
+    Serial.println(" *C");
+    lcd.setCursor(0, 1);
+    Serial.print("Hum: ");
+    Serial.print(h);
+    Serial.print(" %");
+    delay(5000);
+  }
+}
